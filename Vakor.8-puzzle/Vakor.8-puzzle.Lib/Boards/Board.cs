@@ -1,11 +1,13 @@
-﻿using Vakor._8_puzzle.Lib.Tiles;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Vakor._8_puzzle.Lib.Coordinates;
+using Vakor._8_puzzle.Lib.Tiles;
 
 namespace Vakor._8_puzzle.Lib.Boards
 {
     public class Board : IBoard
     {
-        public ITile[,] GameField => _gameField;
-
         public ITile this[int x, int y] => _gameField[x, y];
 
         private readonly ITile[,] _gameField;
@@ -34,7 +36,7 @@ namespace Vakor._8_puzzle.Lib.Boards
                 _gameField[i / IBoard.Dimension, i % IBoard.Dimension] = new UsualTile(i + 1) {HasRightPlace = true};
             }
 
-            _gameField[IBoard.Dimension, IBoard.Dimension] = new EmptyTile {HasRightPlace = true};
+            _gameField[IBoard.Dimension - 1, IBoard.Dimension - 1] = new EmptyTile {HasRightPlace = true};
         }
     }
 }
