@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>Vakor._8_puzzle.Lib</RootNamespace>
+    </PropertyGroup>
+
+</Project>
