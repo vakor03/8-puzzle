@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using Vakor._8_puzzle.Lib.Coordinates;
@@ -26,7 +26,25 @@ namespace Vakor._8_puzzle.Lib.Boards
 
         public void MixTiles()
         {
-            throw new System.NotImplementedException();
+            Random random = new Random();
+
+            for (int i = IBoard.Dimension - 1; i > 0; i--)
+            {
+                for (int j = IBoard.Dimension - 1; j > 0; j--)
+                {
+                    Coordinate sourceCoords = new Coordinate {X = i, Y = j};
+                    Coordinate destCoords = new Coordinate {X = random.Next(i + 1), Y = random.Next(j + 1)};
+
+                    SwapTiles(sourceCoords, destCoords);
+                }
+            }
+        }
+
+        private void SwapTiles(Coordinate sourceCoords, Coordinate destCoords)
+        {
+            ITile temp = _gameField[sourceCoords.X, sourceCoords.Y];
+            _gameField[sourceCoords.X, sourceCoords.Y] = _gameField[destCoords.X, destCoords.Y];
+            _gameField[destCoords.X, destCoords.Y] = temp;
         }
 
         private void PutTilesOnRightPlaces()
