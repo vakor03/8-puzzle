@@ -12,5 +12,10 @@
             _defaultData = 0;
             HasRightPlace = false;
         }
+        
+        public override string ToString()
+        {
+            return Data.ToString();
+        }
     }
 }

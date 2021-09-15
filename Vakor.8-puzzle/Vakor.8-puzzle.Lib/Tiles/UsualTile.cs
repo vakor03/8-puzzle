@@ -11,5 +11,10 @@
             Data = data;
             HasRightPlace = false;
         }
+
+        public override string ToString()
+        {
+            return Data.ToString();
+        }
     }
 }
