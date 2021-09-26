@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vakor.8-puzzle.Lib", "Vakor.8-puzzle.Lib\Vakor.8-puzzle.Lib.csproj", "{4BAA0B3A-31B1-459B-A9AA-6CE1E799E41B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{F1A8E33A-0830-4D17-8125-8B7797E5D4CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{4BAA0B3A-31B1-459B-A9AA-6CE1E799E41B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BAA0B3A-31B1-459B-A9AA-6CE1E799E41B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BAA0B3A-31B1-459B-A9AA-6CE1E799E41B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1A8E33A-0830-4D17-8125-8B7797E5D4CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1A8E33A-0830-4D17-8125-8B7797E5D4CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1A8E33A-0830-4D17-8125-8B7797E5D4CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1A8E33A-0830-4D17-8125-8B7797E5D4CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
