@@ -42,9 +42,7 @@ namespace Vakor._8_puzzle.Lib.Boards
 
         private void SwapTiles(Coordinate sourceCoords, Coordinate destCoords)
         {
-            ITile temp = _gameField[sourceCoords.X, sourceCoords.Y];
-            _gameField[sourceCoords.X, sourceCoords.Y] = _gameField[destCoords.X, destCoords.Y];
-            _gameField[destCoords.X, destCoords.Y] = temp;
+            (_gameField[sourceCoords.X, sourceCoords.Y], _gameField[destCoords.X, destCoords.Y]) = (_gameField[destCoords.X, destCoords.Y], _gameField[sourceCoords.X, sourceCoords.Y]);
         }
 
         private void PutTilesOnRightPlaces()
