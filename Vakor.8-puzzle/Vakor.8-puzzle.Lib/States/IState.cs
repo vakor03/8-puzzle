@@ -14,6 +14,7 @@ namespace Vakor._8_puzzle.Lib.States
         int PathCost { get;}
         Coordinate EmptyTileCoords { get; }
         Direction LastDirection { get; set; }
+        bool DirectionIsPossible(Direction direction);
         void MixTiles();
         void MoveEmptyTile(Direction direction);
         IState<T> MakeChild(Direction emptyTileDirection);

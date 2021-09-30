@@ -79,55 +79,43 @@ namespace Vakor._8_puzzle.Lib.States
         {
             Random random = new Random();
 
-            for (int i = Configuration.Dimension - 1; i > 0; i--)
+            for (int k = 0; k < 1000; k++)
             {
-                for (int j = Configuration.Dimension - 1; j > 0; j--)
+                Direction direction = (Direction) random.Next(4);
+                if (DirectionIsPossible(direction))
                 {
-                    int m = random.Next(i + 1);
-                    int n = random.Next(j + 1);
-
-                    SwapTiles(new Coordinate(i, j), new Coordinate(m, n));
+                    MoveEmptyTile(direction);
                 }
+                else
+                {
+                    k++;
+                }
+                
             }
         }
 
         public void MoveEmptyTile(Direction direction)
         {
+            if (!DirectionIsPossible(direction))
+            {
+                throw new ArgumentException();
+            }
+
             switch (direction)
             {
                 case Direction.Down:
-                    if (EmptyTileCoords.X == Configuration.Dimension - 1)
-                    {
-                        throw new ArgumentException();
-                    }
-
                     SwapTiles(EmptyTileCoords, new Coordinate(EmptyTileCoords.X + 1, EmptyTileCoords.Y));
                     break;
 
                 case Direction.Up:
-                    if (EmptyTileCoords.X == 0)
-                    {
-                        throw new ArgumentException();
-                    }
-
                     SwapTiles(EmptyTileCoords, new Coordinate(EmptyTileCoords.X - 1, EmptyTileCoords.Y));
                     break;
 
                 case Direction.Left:
-                    if (EmptyTileCoords.Y == 0)
-                    {
-                        throw new ArgumentException();
-                    }
-
                     SwapTiles(EmptyTileCoords, new Coordinate(EmptyTileCoords.X, EmptyTileCoords.Y - 1));
                     break;
 
                 case Direction.Right:
-                    if (EmptyTileCoords.Y == Configuration.Dimension - 1)
-                    {
-                        throw new ArgumentException();
-                    }
-
                     SwapTiles(EmptyTileCoords, new Coordinate(EmptyTileCoords.X, EmptyTileCoords.Y + 1));
                     break;
             }
@@ -136,12 +124,12 @@ namespace Vakor._8_puzzle.Lib.States
         public IState<T> MakeChild(Direction emptyTileDirection)
         {
             IState<T> stateClone = (IState<T>) Clone();
-            stateClone.Depth  = Depth+1;
+            stateClone.Depth = Depth + 1;
             stateClone.LastDirection = emptyTileDirection;
             stateClone.MoveEmptyTile(emptyTileDirection);
             return stateClone;
         }
-        
+
         private int FindPathCost()
         {
             int result = 0;
@@ -158,7 +146,7 @@ namespace Vakor._8_puzzle.Lib.States
 
             return result;
         }
-        
+
         private void PutTilesInDefaultLocations(ITile<T>[] tiles)
         {
             foreach (ITile<T> tile in tiles)
@@ -186,13 +174,51 @@ namespace Vakor._8_puzzle.Lib.States
             {
                 for (int j = 0; j < Configuration.Dimension; j++)
                 {
-                    if (this[i,j].GoalCoordinates.CompareTo(secondState[i,j].GoalCoordinates)!=0)
+                    if (this[i, j].GoalCoordinates.CompareTo(secondState[i, j].GoalCoordinates) != 0)
                     {
                         return -1;
                     }
                 }
             }
+
             return 0;
+        }
+
+        public bool DirectionIsPossible(Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.Up:
+                    if (EmptyTileCoords.X > 0 && LastDirection != Direction.Down)
+                    {
+                        return true;
+                    }
+
+                    break;
+                case Direction.Down:
+                    if (EmptyTileCoords.X < Configuration.Dimension - 1 && LastDirection != Direction.Up)
+                    {
+                        return true;
+                    }
+
+                    break;
+                case Direction.Left:
+                    if (EmptyTileCoords.Y > 0 && LastDirection != Direction.Right)
+                    {
+                        return true;
+                    }
+
+                    break;
+                case Direction.Right:
+                    if (EmptyTileCoords.Y < Configuration.Dimension - 1 && LastDirection != Direction.Left)
+                    {
+                        return true;
+                    }
+
+                    break;
+            }
+
+            return false;
         }
     }
 }
