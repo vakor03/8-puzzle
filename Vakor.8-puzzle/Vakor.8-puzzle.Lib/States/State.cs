@@ -90,7 +90,6 @@ namespace Vakor._8_puzzle.Lib.States
                 {
                     k++;
                 }
-                
             }
         }
 
@@ -219,6 +218,67 @@ namespace Vakor._8_puzzle.Lib.States
             }
 
             return false;
+        }
+
+        public static IState<T> CreateDefaultState()
+        {
+            if (typeof(T) == typeof(string))
+            {
+                return CreateDefaultStringState() as IState<T>;
+            }
+
+            if (typeof(T) == typeof(int))
+            {
+                return CreateDefaultIntegerState() as IState<T>;
+            }
+
+            throw new ArgumentException();
+        }
+
+        private static State<string> CreateDefaultStringState()
+        {
+            ITile<string>[,] tileLocations =
+                new ITile<T>[Configuration.Dimension, Configuration.Dimension] as ITile<string>[,];
+            for (int i = 0; i < Configuration.Dimension; i++)
+            {
+                for (int j = 0; j < Configuration.Dimension; j++)
+                {
+                    if (i == Configuration.Dimension - 1 && j == Configuration.Dimension - 1)
+                    {
+                        tileLocations[i, j] = new EmptyTile<string>("0", new Coordinate(i, j));
+                    }
+                    else
+                    {
+                        tileLocations[i, j] = new UsualTile<string>((i * Configuration.Dimension + j + 1).ToString(),
+                            new Coordinate(i, j));
+                    }
+                }
+            }
+
+            return new State<string>(tileLocations);
+        }
+
+        private static State<int> CreateDefaultIntegerState()
+        {
+            ITile<int>[,] tileLocations =
+                new ITile<T>[Configuration.Dimension, Configuration.Dimension] as ITile<int>[,];
+            for (int i = 0; i < Configuration.Dimension; i++)
+            {
+                for (int j = 0; j < Configuration.Dimension; j++)
+                {
+                    if (i == Configuration.Dimension - 1 && j == Configuration.Dimension - 1)
+                    {
+                        tileLocations[i, j] = new EmptyTile<int>(0, new Coordinate(i, j));
+                    }
+                    else
+                    {
+                        tileLocations[i, j] = new UsualTile<int>((i * Configuration.Dimension + j + 1),
+                            new Coordinate(i, j));
+                    }
+                }
+            }
+
+            return new State<int>(tileLocations);
         }
     }
 }
