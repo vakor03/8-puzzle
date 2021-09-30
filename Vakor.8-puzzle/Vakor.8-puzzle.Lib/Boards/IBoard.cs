@@ -2,12 +2,11 @@
 
 namespace Vakor._8_puzzle.Lib.Boards
 {
-    public interface IBoard
+    public interface IBoard<T>
     {
-        ITile this[int x, int y] { get; }
         const int Dimension = 3;
-        
-        void Init();
+        ITile<T> this[int x, int y] { get; }
+        void GenerateNewField();
         void MixTiles();
     }
 }
