@@ -1,73 +1,105 @@
 //TODO Stack
 
 using System.Collections.Generic;
+using Vakor._8_puzzle.Lib.Configurations;
+using Vakor._8_puzzle.Lib.Coordinates;
+using Vakor._8_puzzle.Lib.Enums;
+using Vakor._8_puzzle.Lib.States;
 
 namespace Vakor._8_puzzle.Lib.Algorithms
 {
-    public class LDFS
+    public class LDFS<T>
     {
+        public LDFS(int maxDepth)
+        {
+            MaxDepth = maxDepth;
+        }
+
         private int MaxDepth { get; set; }
-        private State _initialState;
-        
-        public bool Solve(State goal)
+        private IState<object> _initialState;
+
+        public bool Solve(IState<object> goal)
         {
             return true;
         }
-
-        public Direction GetNextTurn()
-        {
-            return Direction.Down;
-        }
-
-        public State RecursiveDLS(State currentState, State goalState, out ResultIndicator resultIndicator)
+        
+        public IState<T> RecursiveDLS(IState<T> currentState,
+            out ResultIndicator resultIndicator)
         {
             bool cutoffOccured = false;
-            
-            if (currentState == goalState)
+
+            if (currentState.AllTilesHasRightPlace)
             {
                 resultIndicator = ResultIndicator.Success;
                 return currentState;
-            }else if(currentState.Depth >= MaxDepth)
+            }
+
+            if (currentState.Depth >= MaxDepth)
             {
                 resultIndicator = ResultIndicator.Cutoff;
                 return currentState;
             }
-            else
+            
+            foreach (var successor in FindExpand(currentState))
             {
-                foreach (var successor in FindExpand(currentState))
+                IState<T> result = RecursiveDLS(successor, out ResultIndicator resultIndicator1);
+                if (resultIndicator1 == ResultIndicator.Cutoff)
                 {
-                    State result = RecursiveDLS(successor, goalState, out ResultIndicator resultIndicator1);
-                    if (resultIndicator1 == ResultIndicator.Cutoff)
-                    {
-                        cutoffOccured = true;
-                    }else if (resultIndicator1 == ResultIndicator.Success)
-                    {
-                        resultIndicator = ResultIndicator.Success;
-                        return result;
-                    }
+                    cutoffOccured = true;
+                }
+                else if (resultIndicator1 == ResultIndicator.Success)
+                {
+                    resultIndicator = ResultIndicator.Success;
+                    return result;
                 }
             }
+
             if (cutoffOccured)
             {
                 resultIndicator = ResultIndicator.Cutoff;
                 return currentState;
             }
-            else
-            {
-                resultIndicator = ResultIndicator.Failure;
-                return currentState;
-            }
+
+            resultIndicator = ResultIndicator.Failure;
+            return currentState;
         }
 
-        private List<State> FindExpand(State currentState)
+        public List<IState<T>> FindExpand(IState<T> currentState)
         {
-            List<State> expand = new List<State>();
-            if (currentState.EmptyTile.)
+            List<IState<T>> expand = new();
+            List<Direction> possibleDirections = new();
+            
+            Coordinate emptyTileCoords = currentState.EmptyTileCoords;
+            
+            if (emptyTileCoords.X > 0 && currentState.LastDirection!=Direction.Down)
             {
-                
+                possibleDirections.Add(Direction.Up);
+            }
+
+            if (emptyTileCoords.X < Configuration.Dimension - 1 && currentState.LastDirection!=Direction.Up)
+            {
+                possibleDirections.Add(Direction.Down);
+            }
+
+            if (emptyTileCoords.Y > 0 && currentState.LastDirection!=Direction.Right)
+            {
+                possibleDirections.Add(Direction.Left);
+            }
+
+            if (emptyTileCoords.Y < Configuration.Dimension - 1 && currentState.LastDirection!=Direction.Left)
+            {
+                possibleDirections.Add(Direction.Right);
+            }
+
+            
+            foreach (var direction in possibleDirections)
+            {
+                expand.Add(currentState.MakeChild(direction));
             }
             
             
+
+            return expand;
         }
     }
 }
