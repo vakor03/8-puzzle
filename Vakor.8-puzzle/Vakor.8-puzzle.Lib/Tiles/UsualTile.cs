@@ -1,18 +1,46 @@
-﻿using Vakor._8_puzzle.Lib.Coordinates;
+﻿using System;
+using Vakor._8_puzzle.Lib.Configurations;
+using Vakor._8_puzzle.Lib.Coordinates;
 
 namespace Vakor._8_puzzle.Lib.Tiles
 {
-    public class UsualTile:ITile
+    public class UsualTile<T>:ITile<T>
     {
-        public int Data { get; }
         public bool IsEmpty => false;
-        public bool HasRightPlace { get; set; }
-        public Coordinate CurrentCoordinates { get; set; }
 
-        public UsualTile(int data)
+        public T Data
+        {
+            get => _data;
+            set
+            {
+                if (value is null)
+                {
+                    throw new ArgumentNullException();
+                }
+                _data = value;
+            }
+        }
+
+        public Coordinate GoalCoordinates
+        {
+            get => _goalCoordinate;
+            set
+            {
+                if (value.X >= Configuration.Dimension || value.Y >= Configuration.Dimension)
+                {
+                    throw new ArgumentException();
+                }
+                _goalCoordinate = value;
+            }
+        }
+
+        private T _data;
+        private Coordinate _goalCoordinate;
+
+        public UsualTile(T data, Coordinate goalCoordinate)
         {
             Data = data;
-            HasRightPlace = false;
+            GoalCoordinates = goalCoordinate;
         }
 
         public override string ToString()

@@ -2,11 +2,10 @@
 
 namespace Vakor._8_puzzle.Lib.Tiles
 {
-    public interface ITile
+    public interface ITile<T>
     {
-        int Data { get; }
         bool IsEmpty { get; }
-        bool HasRightPlace { get; set; }
-        public Coordinate CurrentCoordinates { get; set; }
+        T Data { get; set; }
+        Coordinate GoalCoordinates { get; set; }
     }
 }
