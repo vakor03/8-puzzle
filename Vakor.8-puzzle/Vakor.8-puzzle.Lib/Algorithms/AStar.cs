@@ -1,84 +1,57 @@
-﻿using System;
-using Priority_Queue;
-using Vakor._8_puzzle.Lib.Configurations;
-using Vakor._8_puzzle.Lib.Coordinates;
+﻿using Priority_Queue;
 using Vakor._8_puzzle.Lib.Enums;
-using Vakor._8_puzzle.Lib.PriorityQueues;
 using Vakor._8_puzzle.Lib.States;
 
 namespace Vakor._8_puzzle.Lib.Algorithms
 {
-    using System.Collections.Generic;
-
-    public class AStar<T>
+    public class AStar<T> : SolveAlgorithm<T>
     {
-        private IState<T> _initialState;
+        public override int StatesInMemory => _statesInMemory;
+        public override int IterationsCount => _iterationsCount;
+        public override int SolutionDepth => _solutionDepth;
 
-        public AStar(IState<T> initialState)
-        {
-            _initialState = initialState;
-        }
+        private int _statesInMemory;
+        private int _iterationsCount;
+        private int _solutionDepth;
 
-        public bool Solve()
+        public override ResultIndicator SolvePuzzle(IState<T> initialState)
         {
+            RestoreCounters();
             FastPriorityQueue<State<T>> priorityQueue = new FastPriorityQueue<State<T>>(181440);
-            List<IState<T>> visited = new List<IState<T>>();
-            priorityQueue.Enqueue((State<T>) _initialState, _initialState.Depth + _initialState.PathCost);
+            
+            priorityQueue.Enqueue((State<T>) initialState, FindHeuristic(initialState));
+            _statesInMemory++;
+            
             while (priorityQueue.Count != 0)
             {
                 IState<T> currentState = priorityQueue.Dequeue();
-                visited.Add(currentState);
+                _iterationsCount++;
                 if (currentState.AllTilesHasRightPlace)
                 {
-                    Console.WriteLine(currentState.Depth);
-                    return true;
+                    _solutionDepth = currentState.Depth;
+                    return ResultIndicator.Success;
                 }
 
-                foreach (var state in FindExpand(currentState))
+                foreach (var childState in FindExpand(currentState))
                 {
-                    priorityQueue.Enqueue((State<T>) state, state.Depth + state.PathCost);
+                    _statesInMemory++;
+                    priorityQueue.Enqueue((State<T>) childState, FindHeuristic(childState));
                 }
             }
-
-            return false;
+            
+            return ResultIndicator.Failure;
+        }
+        
+        private int FindHeuristic(IState<T> currentState)
+        {
+            return currentState.Depth + currentState.PathCost;
         }
 
-
-        public List<IState<T>> FindExpand(IState<T> currentState)
+        private void RestoreCounters()
         {
-            List<IState<T>> expand = new();
-            List<Direction> possibleDirections = new();
-
-            Coordinate emptyTileCoords = currentState.EmptyTileCoords;
-
-            if (emptyTileCoords.X > 0 && currentState.LastDirection != Direction.Down)
-            {
-                possibleDirections.Add(Direction.Up);
-            }
-
-            if (emptyTileCoords.X < Configuration.Dimension - 1 && currentState.LastDirection != Direction.Up)
-            {
-                possibleDirections.Add(Direction.Down);
-            }
-
-            if (emptyTileCoords.Y > 0 && currentState.LastDirection != Direction.Right)
-            {
-                possibleDirections.Add(Direction.Left);
-            }
-
-            if (emptyTileCoords.Y < Configuration.Dimension - 1 && currentState.LastDirection != Direction.Left)
-            {
-                possibleDirections.Add(Direction.Right);
-            }
-
-
-            foreach (var direction in possibleDirections)
-            {
-                expand.Add(currentState.MakeChild(direction));
-            }
-
-
-            return expand;
+            _iterationsCount = 0;
+            _statesInMemory = 0;
+            _solutionDepth = -1;
         }
     }
 }

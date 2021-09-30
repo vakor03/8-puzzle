@@ -1,14 +1,11 @@
 //TODO Stack
 
-using System.Collections.Generic;
-using Vakor._8_puzzle.Lib.Configurations;
-using Vakor._8_puzzle.Lib.Coordinates;
 using Vakor._8_puzzle.Lib.Enums;
 using Vakor._8_puzzle.Lib.States;
 
 namespace Vakor._8_puzzle.Lib.Algorithms
 {
-    public class LDFS<T>
+    public class LDFS<T>:SolveAlgorithm<T>
     {
         public LDFS(int maxDepth)
         {
@@ -16,16 +13,11 @@ namespace Vakor._8_puzzle.Lib.Algorithms
         }
 
         private int MaxDepth { get; set; }
-        private IState<object> _initialState;
 
-        public bool Solve(IState<object> goal)
-        {
-            return true;
-        }
-        
-        public IState<T> RecursiveDLS(IState<T> currentState,
+        private IState<T> RecursiveDLS(IState<T> currentState,
             out ResultIndicator resultIndicator)
         {
+            _iterationsCount++;
             bool cutoffOccured = false;
 
             if (currentState.AllTilesHasRightPlace)
@@ -64,42 +56,24 @@ namespace Vakor._8_puzzle.Lib.Algorithms
             return currentState;
         }
 
-        public List<IState<T>> FindExpand(IState<T> currentState)
+        public override int StatesInMemory => 0;
+        public override int IterationsCount => _iterationsCount;
+        public override int SolutionDepth => _solutionDepth;
+
+        private int _iterationsCount;
+        private int _solutionDepth;
+
+        private void RestoreCounters()
         {
-            List<IState<T>> expand = new();
-            List<Direction> possibleDirections = new();
-            
-            Coordinate emptyTileCoords = currentState.EmptyTileCoords;
-            
-            if (emptyTileCoords.X > 0 && currentState.LastDirection!=Direction.Down)
-            {
-                possibleDirections.Add(Direction.Up);
-            }
+            _iterationsCount = 0;
+            _solutionDepth = 0;
+        }
 
-            if (emptyTileCoords.X < Configuration.Dimension - 1 && currentState.LastDirection!=Direction.Up)
-            {
-                possibleDirections.Add(Direction.Down);
-            }
-
-            if (emptyTileCoords.Y > 0 && currentState.LastDirection!=Direction.Right)
-            {
-                possibleDirections.Add(Direction.Left);
-            }
-
-            if (emptyTileCoords.Y < Configuration.Dimension - 1 && currentState.LastDirection!=Direction.Left)
-            {
-                possibleDirections.Add(Direction.Right);
-            }
-
-            
-            foreach (var direction in possibleDirections)
-            {
-                expand.Add(currentState.MakeChild(direction));
-            }
-            
-            
-
-            return expand;
+        public override ResultIndicator SolvePuzzle(IState<T> initialState)
+        {
+            RestoreCounters();
+            RecursiveDLS(initialState, out ResultIndicator resultIndicator);
+            return resultIndicator;
         }
     }
 }
