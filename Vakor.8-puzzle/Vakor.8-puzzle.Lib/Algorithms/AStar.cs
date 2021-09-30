@@ -21,10 +21,10 @@ namespace Vakor._8_puzzle.Lib.Algorithms
 
         public bool Solve()
         {
-            PriorityQueue<IState<T>> priorityQueue = new PriorityQueue<IState<T>>();
+            FastPriorityQueue<State<T>> priorityQueue = new FastPriorityQueue<State<T>>(181440);
             List<IState<T>> visited = new List<IState<T>>();
-            priorityQueue.AddElement(_initialState, _initialState.Depth+_initialState.PathCost);
-            while (!priorityQueue.IsEmpty())
+            priorityQueue.Enqueue((State<T>) _initialState, _initialState.Depth + _initialState.PathCost);
+            while (priorityQueue.Count != 0)
             {
                 IState<T> currentState = priorityQueue.Dequeue();
                 visited.Add(currentState);
@@ -36,59 +36,47 @@ namespace Vakor._8_puzzle.Lib.Algorithms
 
                 foreach (var state in FindExpand(currentState))
                 {
-                    bool stateIsAlreadyVisited = false;
-                    foreach (var st in visited)
-                    {
-                        if (st.CompareTo(state)==0)
-                        {
-                            stateIsAlreadyVisited = true;
-                        }
-                    }
-
-                    if (!stateIsAlreadyVisited)
-                    {
-                        priorityQueue.AddElement((State<T>)state,state.Depth+state.PathCost);
-                    }
+                    priorityQueue.Enqueue((State<T>) state, state.Depth + state.PathCost);
                 }
             }
+
             return false;
         }
-        
-        
+
+
         public List<IState<T>> FindExpand(IState<T> currentState)
         {
             List<IState<T>> expand = new();
             List<Direction> possibleDirections = new();
-            
+
             Coordinate emptyTileCoords = currentState.EmptyTileCoords;
-            
-            if (emptyTileCoords.X > 0 && currentState.LastDirection!=Direction.Down)
+
+            if (emptyTileCoords.X > 0 && currentState.LastDirection != Direction.Down)
             {
                 possibleDirections.Add(Direction.Up);
             }
 
-            if (emptyTileCoords.X < Configuration.Dimension - 1 && currentState.LastDirection!=Direction.Up)
+            if (emptyTileCoords.X < Configuration.Dimension - 1 && currentState.LastDirection != Direction.Up)
             {
                 possibleDirections.Add(Direction.Down);
             }
 
-            if (emptyTileCoords.Y > 0 && currentState.LastDirection!=Direction.Right)
+            if (emptyTileCoords.Y > 0 && currentState.LastDirection != Direction.Right)
             {
                 possibleDirections.Add(Direction.Left);
             }
 
-            if (emptyTileCoords.Y < Configuration.Dimension - 1 && currentState.LastDirection!=Direction.Left)
+            if (emptyTileCoords.Y < Configuration.Dimension - 1 && currentState.LastDirection != Direction.Left)
             {
                 possibleDirections.Add(Direction.Right);
             }
 
-            
+
             foreach (var direction in possibleDirections)
             {
                 expand.Add(currentState.MakeChild(direction));
             }
-            
-            
+
 
             return expand;
         }
