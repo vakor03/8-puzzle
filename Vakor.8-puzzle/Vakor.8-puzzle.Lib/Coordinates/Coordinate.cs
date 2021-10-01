@@ -14,9 +14,14 @@ namespace Vakor._8_puzzle.Lib.Coordinates
         }
         public int CompareTo(Coordinate other)
         {
-            var xComparison = X.CompareTo(other.X);
-            if (xComparison != 0) return xComparison;
-            return Y.CompareTo(other.Y);
+            if (X.CompareTo(other.X) == 0 && Y.CompareTo(other.Y)==0)
+            {
+                return 0;
+            }
+            else
+            {
+                return -1;
+            }
         }
     }
 }
