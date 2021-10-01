@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Vakor._8_puzzle.Lib.Algorithms;
 using Vakor._8_puzzle.Lib.Configurations;
 using Vakor._8_puzzle.Lib.Coordinates;
 using Vakor._8_puzzle.Lib.Enums;
@@ -16,7 +14,7 @@ namespace Vakor._8_puzzle.Tests
         [TestMethod]
         public void RightPlaceTest()
         {
-            IState<string> state = CreateDefaultState();
+            var state = State<string>.CreateDefaultState();
 
             Assert.AreEqual(true, state.AllTilesHasRightPlace);
             Assert.AreEqual(0, state.PathCost);
@@ -27,48 +25,70 @@ namespace Vakor._8_puzzle.Tests
         [TestMethod]
         public void MoveEmptyTileTest()
         {
-            IState<string> state = CreateDefaultState();
+            var state = State<string>.CreateDefaultState();
 
             state.MoveEmptyTile(Direction.Left);
             Assert.AreEqual(new Coordinate(Configuration.Dimension - 1, Configuration.Dimension - 2),
                 state.EmptyTileCoords);
-            Assert.ThrowsException<ArgumentException>((() => state.MoveEmptyTile(Direction.Down)));
+            Assert.ThrowsException<ArgumentException>(() => state.MoveEmptyTile(Direction.Down));
             Assert.AreEqual(2, state.PathCost);
         }
 
         [TestMethod]
         public void MoveEmptyTileAllDimensionsTest()
         {
-            IState<string> state = CreateDefaultState();
+            var state = State<string>.CreateDefaultState();
 
             state.MoveEmptyTile(Direction.Left);
             state.MoveEmptyTile(Direction.Right);
             state.MoveEmptyTile(Direction.Up);
             state.MoveEmptyTile(Direction.Down);
-            
+
             Assert.AreEqual(new Coordinate(Configuration.Dimension - 1, Configuration.Dimension - 1),
                 state.EmptyTileCoords);
         }
-        
-        private IState<string> CreateDefaultState()
-        {
-            ITile<string>[] field = new ITile<string>[Configuration.Dimension * Configuration.Dimension];
-            for (int i = 0; i < Configuration.Dimension * Configuration.Dimension; i++)
-            {
-                if (i == Configuration.Dimension * Configuration.Dimension - 1)
-                {
-                    field[i] = new EmptyTile<string>(i.ToString(),
-                        new Coordinate(i / Configuration.Dimension, i % Configuration.Dimension));
-                }
-                else
-                {
-                    field[i] = new UsualTile<string>(i.ToString(),
-                        new Coordinate(i / Configuration.Dimension, i % Configuration.Dimension));
-                }
-            }
 
-            IState<string> state = new State<string>(field);
-            return state;
+        [TestMethod]
+        public void CompareTest()
+        {
+            var state1 = State<string>.CreateDefaultState();
+            var state2 = State<string>.CreateDefaultState();
+            
+            state1.MoveEmptyTile(Direction.Left);
+            state2.MoveEmptyTile(Direction.Left);
+            
+            Assert.AreEqual(0, state1.CompareTo(state2));
+        }
+        [TestMethod]
+        public void MixTilesTest()
+        {
+            IState<string> state = State<string>.CreateDefaultState();
+            state.MixTiles();
+            
+            Assert.AreEqual(false, state.AllTilesHasRightPlace);
+        }
+
+        [TestMethod]
+        public void CloneTest()
+        {
+            IState<string> state = State<string>.CreateDefaultState();
+
+            IState<string> clonedState = state.Clone() as IState<string>;
+            
+            Assert.AreEqual(state.AllTilesHasRightPlace, clonedState.AllTilesHasRightPlace);
+            Assert.AreNotEqual(state, clonedState);
+        }
+
+        [TestMethod]
+        public void MakeChildTest()
+        {
+            IState<string> state = State<string>.CreateDefaultState();
+
+            IState<string> changedState = State<string>.MakeChild(state, Direction.Left);
+            
+            Assert.AreEqual(Direction.Left, changedState.LastDirection);
+            Assert.AreEqual(1, changedState.Depth);
+            Assert.AreEqual(false,changedState.AllTilesHasRightPlace);
         }
     }
 }

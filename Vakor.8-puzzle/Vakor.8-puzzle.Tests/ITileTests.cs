@@ -57,5 +57,13 @@ namespace Vakor._8_puzzle.Tests
             Assert.ThrowsException<ArgumentException>(() => emptyTile.GoalCoordinates = new Coordinate(Configuration.Dimension, Configuration.Dimension));
 
         }
+
+        [TestMethod]
+        public void ToStringTest()
+        {
+            ITile<string> tile = new UsualTile<string>("data", new Coordinate(0,0));
+            
+            Assert.AreEqual(tile.Data,tile.ToString());
+        }
     }
 }
