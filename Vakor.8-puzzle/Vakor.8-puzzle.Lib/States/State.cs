@@ -36,7 +36,9 @@ namespace Vakor._8_puzzle.Lib.States
             }
         }
 
-        public int Depth { get; set; }
+        public int Depth => _depth;
+        
+        private int _depth;
         private ITile<T>[,] _tileLocations;
 
         public int PathCost => FindPathCost();
@@ -63,23 +65,24 @@ namespace Vakor._8_puzzle.Lib.States
         public Direction LastDirection { get; set; }
 
 
-        public State(ITile<T>[] tiles)
-        {
-            _tileLocations = new ITile<T>[Configuration.Dimension, Configuration.Dimension];
-            PutTilesInDefaultLocations(tiles);
-            LastDirection = Direction.Default;
-        }
+        // public State(ITile<T>[] tiles)
+        // {
+        //     _tileLocations = new ITile<T>[Configuration.Dimension, Configuration.Dimension];
+        //     PutTilesInDefaultLocations(tiles);
+        //     LastDirection = Direction.Default;
+        // }
 
-        public State(ITile<T>[,] tileLocations)
+        public State(ITile<T>[,] tileLocations, int depth = 0)
         {
             _tileLocations = tileLocations;
+            _depth = 0;
         }
 
         public void MixTiles()
         {
             Random random = new Random();
 
-            for (int k = 0; k < 1000; k++)
+            for (int k = 0; k < Configuration.MixIterationCount; k++)
             {
                 Direction direction = (Direction) random.Next(4);
                 if (DirectionIsPossible(direction))
@@ -120,13 +123,19 @@ namespace Vakor._8_puzzle.Lib.States
             }
         }
 
-        public IState<T> MakeChild(Direction emptyTileDirection)
+        public static IState<T> MakeChild(IState<T> parentState,Direction emptyTileDirection)
         {
-            IState<T> stateClone = (IState<T>) Clone();
-            stateClone.Depth = Depth + 1;
+            State<T> stateClone = (State<T>) parentState.Clone();
+            stateClone._depth= parentState.Depth + 1;
             stateClone.LastDirection = emptyTileDirection;
             stateClone.MoveEmptyTile(emptyTileDirection);
             return stateClone;
+        }
+        
+        public object Clone()
+        {
+            IState<T> newState = new State<T>(_tileLocations.Clone() as ITile<T>[,]);
+            return newState;
         }
 
         private int FindPathCost()
@@ -146,25 +155,18 @@ namespace Vakor._8_puzzle.Lib.States
             return result;
         }
 
-        private void PutTilesInDefaultLocations(ITile<T>[] tiles)
-        {
-            foreach (ITile<T> tile in tiles)
-            {
-                _tileLocations[tile.GoalCoordinates.X, tile.GoalCoordinates.Y] = tile;
-            }
-        }
+        // private void PutTilesInDefaultLocations(ITile<T>[] tiles)
+        // {
+        //     foreach (ITile<T> tile in tiles)
+        //     {
+        //         _tileLocations[tile.GoalCoordinates.X, tile.GoalCoordinates.Y] = tile;
+        //     }
+        // }
 
         private void SwapTiles(Coordinate firstTileCoord, Coordinate secondTileCoord)
         {
             (this[firstTileCoord], this[secondTileCoord]) = (this[secondTileCoord], this[firstTileCoord]);
         }
-
-        public object Clone()
-        {
-            IState<T> newState = new State<T>(_tileLocations.Clone() as ITile<T>[,]);
-            return newState;
-        }
-
 
         public int CompareTo(object? obj)
         {
@@ -255,8 +257,8 @@ namespace Vakor._8_puzzle.Lib.States
                 }
             }
 
-            return new State<string>(tileLocations);
-        }
+            return new State<string>(tileLocations){LastDirection = Direction.Default};
+    }
 
         private static State<int> CreateDefaultIntegerState()
         {
@@ -278,7 +280,7 @@ namespace Vakor._8_puzzle.Lib.States
                 }
             }
 
-            return new State<int>(tileLocations);
+            return new State<int>(tileLocations){LastDirection = Direction.Default};
         }
     }
 }

@@ -10,13 +10,12 @@ namespace Vakor._8_puzzle.Lib.States
     {
         ITile<T> this[int x, int y] { get; }
         bool AllTilesHasRightPlace { get; }
-        int Depth { get; set; }
+        int Depth { get; }
         int PathCost { get;}
         Coordinate EmptyTileCoords { get; }
         Direction LastDirection { get; set; }
         bool DirectionIsPossible(Direction direction);
         void MixTiles();
         void MoveEmptyTile(Direction direction);
-        IState<T> MakeChild(Direction emptyTileDirection);
     }
 }
