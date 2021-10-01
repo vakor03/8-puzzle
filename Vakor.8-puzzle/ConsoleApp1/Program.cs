@@ -16,11 +16,13 @@ namespace ConsoleApp1
             
             Console.WriteLine(algorithm.SolvePuzzle(state));
             Console.WriteLine(algorithm.IterationsCount);
+            Console.WriteLine(algorithm.SolutionDepth);
 
             SolveAlgorithm<string> algorithm1 = new LDFS<string>(25);
 
             Console.WriteLine(algorithm1.SolvePuzzle(state));
             Console.WriteLine(algorithm1.IterationsCount);
+            Console.WriteLine(algorithm.SolutionDepth);
 
         }
 
