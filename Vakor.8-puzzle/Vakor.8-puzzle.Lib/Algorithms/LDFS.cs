@@ -1,5 +1,3 @@
-//TODO Stack
-
 using Vakor._8_puzzle.Lib.Enums;
 using Vakor._8_puzzle.Lib.States;
 
@@ -9,10 +7,27 @@ namespace Vakor._8_puzzle.Lib.Algorithms
     {
         public LDFS(int maxDepth)
         {
-            MaxDepth = maxDepth;
+            _maxDepth = maxDepth;
         }
 
-        private int MaxDepth { get; set; }
+
+        public override int StatesInMemory => 0;
+
+        public override int IterationsCount => _iterationsCount;
+
+        public override int SolutionDepth => _solutionDepth;
+        private readonly int _maxDepth;
+
+        private int _iterationsCount;
+
+        private int _solutionDepth;
+
+        public override ResultIndicator SolvePuzzle(IState<T> initialState)
+        {
+            RestoreCounters();
+            RecursiveDLS(initialState, out ResultIndicator resultIndicator);
+            return resultIndicator;
+        }
 
         private IState<T> RecursiveDLS(IState<T> currentState,
             out ResultIndicator resultIndicator)
@@ -26,7 +41,7 @@ namespace Vakor._8_puzzle.Lib.Algorithms
                 return currentState;
             }
 
-            if (currentState.Depth >= MaxDepth)
+            if (currentState.Depth >= _maxDepth)
             {
                 resultIndicator = ResultIndicator.Cutoff;
                 return currentState;
@@ -34,15 +49,15 @@ namespace Vakor._8_puzzle.Lib.Algorithms
             
             foreach (var successor in FindExpand(currentState))
             {
-                IState<T> result = RecursiveDLS(successor, out ResultIndicator resultIndicator1);
-                if (resultIndicator1 == ResultIndicator.Cutoff)
+                IState<T> resultState = RecursiveDLS(successor, out ResultIndicator sucResultIndicator);
+                if (sucResultIndicator == ResultIndicator.Cutoff)
                 {
                     cutoffOccured = true;
                 }
-                else if (resultIndicator1 == ResultIndicator.Success)
+                else if (sucResultIndicator == ResultIndicator.Success)
                 {
                     resultIndicator = ResultIndicator.Success;
-                    return result;
+                    return resultState;
                 }
             }
 
@@ -56,24 +71,10 @@ namespace Vakor._8_puzzle.Lib.Algorithms
             return currentState;
         }
 
-        public override int StatesInMemory => 0;
-        public override int IterationsCount => _iterationsCount;
-        public override int SolutionDepth => _solutionDepth;
-
-        private int _iterationsCount;
-        private int _solutionDepth;
-
         private void RestoreCounters()
         {
             _iterationsCount = 0;
             _solutionDepth = 0;
-        }
-
-        public override ResultIndicator SolvePuzzle(IState<T> initialState)
-        {
-            RestoreCounters();
-            RecursiveDLS(initialState, out ResultIndicator resultIndicator);
-            return resultIndicator;
         }
     }
 }

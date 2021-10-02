@@ -5,8 +5,6 @@ using Vakor._8_puzzle.Lib.States;
 
 namespace Vakor._8_puzzle.Lib.Algorithms
 {
-    //TODO RESULT INDEX, states in memory, iterations count
-    //30 MIN, 512 MB
     public abstract class SolveAlgorithm<T>
     {
         public abstract int StatesInMemory { get; }
