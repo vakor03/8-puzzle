@@ -1,4 +1,5 @@
 ﻿using Priority_Queue;
+using Vakor._8_puzzle.Lib.Configurations;
 using Vakor._8_puzzle.Lib.Enums;
 using Vakor._8_puzzle.Lib.States;
 
@@ -17,7 +18,7 @@ namespace Vakor._8_puzzle.Lib.Algorithms
         public override ResultIndicator SolvePuzzle(IState<T> initialState)
         {
             RestoreCounters();
-            FastPriorityQueue<State<T>> priorityQueue = new FastPriorityQueue<State<T>>(181440);
+            FastPriorityQueue<State<T>> priorityQueue = new FastPriorityQueue<State<T>>(Configuration.MaxPossibleStates);
             
             priorityQueue.Enqueue((State<T>) initialState, FindHeuristic(initialState));
             _statesInMemory++;
