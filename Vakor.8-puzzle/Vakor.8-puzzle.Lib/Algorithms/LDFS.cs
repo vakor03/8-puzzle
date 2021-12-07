@@ -1,3 +1,4 @@
+using Vakor._8_puzzle.Lib.Configurations;
 using Vakor._8_puzzle.Lib.Enums;
 using Vakor._8_puzzle.Lib.States;
 
@@ -5,18 +6,18 @@ namespace Vakor._8_puzzle.Lib.Algorithms
 {
     public class LDFS<T>:SolveAlgorithm<T>
     {
-        public LDFS(int maxDepth)
+        public LDFS()
         {
-            _maxDepth = maxDepth;
         }
 
 
+        public override string AlgorithmName => "LDFS";
         public override int StatesInMemory => 0;
 
         public override int IterationsCount => _iterationsCount;
 
         public override int SolutionDepth => _solutionDepth;
-        private readonly int _maxDepth;
+        private readonly int _maxDepth = Configuration.LDFSMaxDepth;
 
         private int _iterationsCount;
 
@@ -25,7 +26,8 @@ namespace Vakor._8_puzzle.Lib.Algorithms
         public override ResultIndicator SolvePuzzle(IState<T> initialState)
         {
             RestoreCounters();
-            RecursiveDLS(initialState, out ResultIndicator resultIndicator);
+            var resultState = RecursiveDLS(initialState, out ResultIndicator resultIndicator);
+            _solutionDepth = resultState.Depth;
             return resultIndicator;
         }
 

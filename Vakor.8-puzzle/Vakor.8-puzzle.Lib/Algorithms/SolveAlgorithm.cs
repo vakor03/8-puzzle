@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Vakor._8_puzzle.Lib.Configurations;
 using Vakor._8_puzzle.Lib.Enums;
@@ -7,6 +8,7 @@ namespace Vakor._8_puzzle.Lib.Algorithms
 {
     public abstract class SolveAlgorithm<T>
     {
+        public abstract string AlgorithmName { get; }
         public abstract int StatesInMemory { get; }
         public abstract int IterationsCount { get; }
         public abstract int SolutionDepth { get; }

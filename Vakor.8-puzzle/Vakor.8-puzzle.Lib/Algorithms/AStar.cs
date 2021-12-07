@@ -7,6 +7,7 @@ namespace Vakor._8_puzzle.Lib.Algorithms
 {
     public class AStar<T> : SolveAlgorithm<T>
     {
+        public override string AlgorithmName => "A*";
         public override int StatesInMemory => _statesInMemory;
         public override int IterationsCount => _iterationsCount;
         public override int SolutionDepth => _solutionDepth;

@@ -11,19 +11,21 @@ namespace ConsoleApp1
         {
             IState<string> state = State<string>.CreateDefaultState();
             state.MixTiles();
+            SolveAlgorithm<string> algorithmAStar = new AStar<string>();
+            SolveAlgorithm<string> algorithmLDFS = new LDFS<string>();
             ShowState(state);
-            SolveAlgorithm<string> algorithm = new AStar<string>();
-            
-            Console.WriteLine(algorithm.SolvePuzzle(state));
-            Console.WriteLine(algorithm.IterationsCount);
-            Console.WriteLine(algorithm.SolutionDepth);
+            algorithmLDFS.SolvePuzzle(state);
+            ShowStatistics(algorithmLDFS);
 
-            SolveAlgorithm<string> algorithm1 = new LDFS<string>(25);
+            algorithmAStar.SolvePuzzle(state);
+            ShowStatistics(algorithmAStar);
 
-            Console.WriteLine(algorithm1.SolvePuzzle(state));
-            Console.WriteLine(algorithm1.IterationsCount);
-            Console.WriteLine(algorithm.SolutionDepth);
 
+
+
+
+            // Console.WriteLine();
+            // ShowStatistics(algorithmLDFS);
         }
 
         private static void ShowState(IState<string> state)
@@ -34,11 +36,19 @@ namespace ConsoleApp1
                 Console.WriteLine();
                 for (int j = 0; j < Configuration.Dimension; j++)
                 {
-                    Console.Write($"{state[i,j].Data}{separator}");
+                    Console.Write($"{state[i, j].Data}{separator}");
                 }
             }
 
             Console.WriteLine();
+        }
+
+        private static void ShowStatistics(SolveAlgorithm<string> algorithm)
+        {
+            Console.WriteLine($"Algorithm {algorithm.AlgorithmName}");
+            Console.WriteLine($"Iterations: {algorithm.IterationsCount}");
+            Console.WriteLine($"States in memory: {algorithm.StatesInMemory}");
+            Console.WriteLine($"Depth of the solution node: {algorithm.SolutionDepth}");
         }
     }
 }
